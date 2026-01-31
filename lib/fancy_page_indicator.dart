@@ -339,8 +339,11 @@ class _CapsulePainter extends CustomPainter {
     }
 
     final totalW = widths.fold(0.0, (a, b) => a + b) + (n - 1) * spacing;
-    final startX =
-        (size.width - totalW) / 2 - frac * (inactiveDotWidth + spacing);
+    // Use actual first-dot width so scroll step matches when first dot is active
+    final scrollStep = widths.isNotEmpty ? (widths[0] + spacing) : (inactiveDotWidth + spacing);
+    var startX = (size.width - totalW) / 2 - frac * scrollStep;
+    // Keep strip on screen so active dot is never clipped
+    startX = startX.clamp(0.0, math.max(0.0, size.width - totalW));
 
     final bgColor = inactiveColor.withValues(alpha: inactiveColor.a * 0.36);
     final bgPaint = Paint()

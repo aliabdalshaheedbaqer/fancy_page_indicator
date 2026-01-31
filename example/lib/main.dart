@@ -66,7 +66,7 @@ class _ExamplePageState extends State<ExamplePage> {
             padding: const EdgeInsets.all(16),
             child: FancyPageIndicator(
               controller: controller,
-              count: 5,
+              count: 8,
               enableLoupe: true,
             ),
           ),
