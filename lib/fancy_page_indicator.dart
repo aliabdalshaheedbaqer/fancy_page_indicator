@@ -182,12 +182,10 @@ class _FancyPageIndicatorState extends State<FancyPageIndicator> {
         controller: widget.controller,
         count: widget.count,
         reverse: widget.reverse,
-        progressColor:
-            widget.loupeProgressColor ??
+        progressColor: widget.loupeProgressColor ??
             widget.dotColor ??
             const Color(0x339966CC),
-        handleColor:
-            widget.loupeHandleColor ??
+        handleColor: widget.loupeHandleColor ??
             widget.activeDotColor ??
             const Color(0xFF9966CC),
       ),
@@ -213,9 +211,8 @@ class _FancyPageIndicatorState extends State<FancyPageIndicator> {
       try {
         widget.controller.position.jumpTo(targetPage * _viewportWidth);
       } catch (_) {
-        final page = targetPage
-            .clamp(0.0, (widget.count - 1).toDouble())
-            .round();
+        final page =
+            targetPage.clamp(0.0, (widget.count - 1).toDouble()).round();
         try {
           widget.controller.animateToPage(
             page,

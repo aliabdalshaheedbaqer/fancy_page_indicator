@@ -70,6 +70,8 @@ class _ExamplePageState extends State<ExamplePage> {
               enableLoupe: true,
             ),
           ),
+
+          SizedBox(height: 20),
         ],
       ),
     );
