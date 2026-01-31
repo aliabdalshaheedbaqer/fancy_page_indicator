@@ -1,7 +1,7 @@
 name: fancy_page_indicator
 description: A capsule-style page indicator with optional loupe overlay.
 version: 0.0.1
-author: aliabdalshaheedbaqer <baqer.abd66@gmail.com>
+
 homepage: https://github.com/aliabdalshaheedbaqer/fancy_page_indicator
 
 environment:
