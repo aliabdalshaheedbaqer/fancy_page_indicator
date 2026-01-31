@@ -1,5 +1,5 @@
 name: fancy_page_indicator
-description: "A new Flutter package project."
+description: "A capsule-style page indicator with optional loupe overlay (long-press to show progress line). Optimized for performance with minimal rebuilds."
 version: 0.0.1
 homepage:
 
