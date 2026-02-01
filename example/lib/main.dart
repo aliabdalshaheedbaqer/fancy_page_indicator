@@ -49,7 +49,7 @@ class _ExamplePageState extends State<ExamplePage> {
             child: PageView(
               controller: controller,
               children: List.generate(
-                5,
+                8,
                 (index) => Container(
                   color: Colors.primaries[index % Colors.primaries.length],
                   child: Center(
@@ -66,6 +66,11 @@ class _ExamplePageState extends State<ExamplePage> {
             padding: const EdgeInsets.all(16),
             child: FancyPageIndicator(
               controller: controller,
+    
+              transitionDuration: Duration( 
+              milliseconds: 6002,
+              ),
+              transitionCurve: Curves.easeInOut,
               count: 8,
               enableLoupe: true,
             ),

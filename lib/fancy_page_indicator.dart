@@ -38,7 +38,7 @@ class FancyPageIndicator extends StatefulWidget {
     this.enableProgressiveFill = false,
     this.reverse = false,
     this.transitionDuration = const Duration(milliseconds: 300),
-    this.transitionCurve = Curves.easeInOut,
+    this.transitionCurve = Curves.easeOutCubic,
   });
 
   /// [PageController] driving the [PageView]. Must be the same as the PageView's controller.
@@ -265,6 +265,7 @@ class _FancyPageIndicatorState extends State<FancyPageIndicator> {
               activeColor: activeColor,
               enableProgressiveFill: widget.enableProgressiveFill,
               reverse: widget.reverse,
+              transitionCurve: widget.transitionCurve,
             ),
           ),
         ),
@@ -290,6 +291,7 @@ class _CapsulePainter extends CustomPainter {
     required this.activeColor,
     required this.enableProgressiveFill,
     required this.reverse,
+    required this.transitionCurve,
   }) : super(repaint: controller);
 
   final PageController controller;
@@ -303,6 +305,7 @@ class _CapsulePainter extends CustomPainter {
   final Color activeColor;
   final bool enableProgressiveFill;
   final bool reverse;
+  final Curve transitionCurve;
 
   static double _lerp(double a, double b, double t) => a + (b - a) * t;
 
@@ -324,7 +327,6 @@ class _CapsulePainter extends CustomPainter {
     final n = math.min(count, maxVisibleDots);
     final visibleOffset = _getVisibleOffset(page);
     final firstIdx = visibleOffset.floor().clamp(0, math.max(0, count - n));
-    final frac = (visibleOffset - firstIdx).clamp(0.0, 1.0);
 
     final widths = <double>[];
     final colors = <Color>[];
@@ -332,24 +334,20 @@ class _CapsulePainter extends CustomPainter {
 
     for (var i = firstIdx; i < firstIdx + n; i++) {
       final d = (page - i).abs();
-      final t = (1.0 - d).clamp(0.0, 1.0);
+      final tRaw = (1.0 - d).clamp(0.0, 1.0);
+      final t = transitionCurve.transform(tRaw);
       widths.add(_lerp(inactiveDotWidth, activeDotWidth, t));
       colors.add(Color.lerp(inactiveColor, activeColor, t)!);
       fills.add((1.0 - d).clamp(0.0, 1.0));
     }
 
     final totalW = widths.fold(0.0, (a, b) => a + b) + (n - 1) * spacing;
-    // Use actual first-dot width so scroll step matches when first dot is active
-    final scrollStep = widths.isNotEmpty ? (widths[0] + spacing) : (inactiveDotWidth + spacing);
-    var startX = (size.width - totalW) / 2 - frac * scrollStep;
-    // Keep strip on screen so active dot is never clipped
-    startX = startX.clamp(0.0, math.max(0.0, size.width - totalW));
+    final startX = (size.width - totalW) / 2;
 
     final bgColor = inactiveColor.withValues(alpha: inactiveColor.a * 0.36);
     final bgPaint = Paint()
       ..color = bgColor
       ..style = PaintingStyle.fill;
-
     final fillPaint = Paint()..style = PaintingStyle.fill;
 
     var x = startX;
@@ -360,9 +358,10 @@ class _CapsulePainter extends CustomPainter {
       final dy = (size.height - h) / 2;
 
       final rect = Rect.fromLTWH(x, dy, w, h);
-      final rrect = RRect.fromRectAndRadius(rect, Radius.circular(h / 2));
-
-      canvas.drawRRect(rrect, bgPaint);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(h / 2)),
+        bgPaint,
+      );
 
       final fillW = enableProgressiveFill ? (w * fills[j]).clamp(0.0, w) : w;
       if (fillW > 0) {
@@ -392,7 +391,8 @@ class _CapsulePainter extends CustomPainter {
       old.inactiveColor != inactiveColor ||
       old.activeColor != activeColor ||
       old.enableProgressiveFill != enableProgressiveFill ||
-      old.reverse != reverse;
+      old.reverse != reverse ||
+      old.transitionCurve != transitionCurve;
 }
 
 // ---------------------------------------------------------------------------
